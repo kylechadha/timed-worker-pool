@@ -41,10 +41,11 @@ type Config struct {
 // Payload defines a sample payload.
 type Payload struct {
 	// Sample payload
+	text string
 }
 
 // NewTimedWorkerPool creates a new default TimedWorkerPool.
-func NewTimedWorkerPool(cfg Config, logger log15.Logger, queue chan *Payload) (TimedWorkerPool, error) {
+func NewTimedWorkerPool(cfg Config, logger log15.Logger, queue chan *Payload) (*TimedWorkerPool, error) {
 	wp := &TimedWorkerPool{
 		cfg:    cfg,
 		logger: logger,
@@ -150,7 +151,7 @@ func (wp *TimedWorkerPool) doWork(payloads []*Payload) (err error) {
 		wp.logger.Debug("Doing work for the next batch of payloads", "len_payloads", len(payloads), "dump", s.String())
 	}
 
-	for i := 0; i < wp.cfg.Retries; i++ {
+	for i := 0; i <= wp.cfg.Retries; i++ {
 		// Do some work that returns an error.
 
 		if err == nil {
